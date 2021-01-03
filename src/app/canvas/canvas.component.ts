@@ -1,6 +1,11 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import * as THREE from 'three';
 
+/**
+ * 描画部分のコンポーネント
+ * 描画するためのデータを受け取って描画する
+ */
+
 class View {
   private canvas:HTMLCanvasElement;
   private renderer:THREE.WebGLRenderer;
@@ -56,12 +61,16 @@ class View {
   styleUrls: ['./canvas.component.css']
 })
 export class CanvasComponent implements OnInit, AfterViewInit {
+  // DOMのcanvas
   @ViewChild('myCanvas', {static: false}) myCanvas: ElementRef<HTMLCanvasElement>;
+
   private view:View;
   constructor() {
-    console.log('hoge hoge');
-    console.log(this.myCanvas);
   }
+
+  /**
+   * canvasの初期化
+   */
   ngAfterViewInit(): void {
     this.view = new View(this.myCanvas.nativeElement);
   }

@@ -1,0 +1,5 @@
+.dropZone {
+    width: 100%;
+    border: dashed 1px black;
+    background-color: coral;
+}
