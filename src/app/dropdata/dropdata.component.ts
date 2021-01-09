@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
+import { EventEmitter } from '@angular/core';
 
 /**
  * ドロップされたデータを読み取る
+ * Output: 読み取ったデータのstring
  */
 
 @Component({
@@ -10,6 +12,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dropdata.component.css']
 })
 export class DropdataComponent implements OnInit {
+
+  // ドロップされたファイル
+  @Output() fileEvent: EventEmitter<string> = new EventEmitter();
 
   constructor() { }
 
@@ -22,10 +27,13 @@ export class DropdataComponent implements OnInit {
 
   onDrop(ev: DragEvent) {
     const f = ev.dataTransfer.files[0];
-    console.log(f);
     const fr = new FileReader();
+    const fileEvent = this.fileEvent;
     fr.onload = function () {
-      console.log(fr.result);
+      const result = fr.result;
+      if (typeof result === 'string') {
+        fileEvent.emit(result);
+      }
     }
     fr.readAsText(f);
   }

@@ -1,5 +1,5 @@
 <div>
-  <app-dropdata></app-dropdata>
+  <app-dropdata (fileEvent)="testOutput($event)"></app-dropdata>
   <!-- 描画部 -->
-  <app-canvas></app-canvas>
+  <app-canvas xyz="{{str}}"></app-canvas>
 </div>

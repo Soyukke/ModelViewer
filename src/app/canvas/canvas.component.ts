@@ -1,27 +1,30 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { rendererTypeName } from '@angular/compiler';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, Input } from '@angular/core';
 import * as THREE from 'three';
 
 /**
  * 描画部分のコンポーネント
  * 描画するためのデータを受け取って描画する
+ *
+ * @Input ファイルデータ
  */
 
 class View {
-  private canvas:HTMLCanvasElement;
-  private renderer:THREE.WebGLRenderer;
-  private scene:THREE.Scene;
-  private camera:THREE.Camera;
+  private canvas: HTMLCanvasElement;
+  private renderer: THREE.WebGLRenderer;
+  public scene: THREE.Scene;
+  private camera: THREE.Camera;
   private light = new THREE.DirectionalLight(0xFFFFFF);
 
-  constructor(canvas:HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement) {
     if (canvas == null) {
       const e = new Error('#canvasが見つからない');
       throw e;
     }
     this.canvas = canvas;
-    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas});
-    const width = window.innerWidth*0.8;
-    const height = window.innerHeight*0.8;
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+    const width = window.innerWidth * 0.8;
+    const height = window.innerHeight * 0.8;
     this.renderer.setSize(width, height);
 
     // 視野角
@@ -34,13 +37,13 @@ class View {
     this.scene = new THREE.Scene();
     const A = 10;
     const geometry = new THREE.BoxGeometry(A, A, A);
-    const material = new THREE.MeshLambertMaterial({color: 0x00FF00});
+    const material = new THREE.MeshLambertMaterial({ color: 0x00FF00 });
     const cube = new THREE.Mesh(geometry, material);
     this.scene.add(cube);
     this.light.position.set(1000, 1000, 1000);
     this.scene.add(this.light);
     const aspect = window.innerWidth / window.innerHeight;
-    this.camera = new THREE.PerspectiveCamera(60, aspect, 1, d*2);
+    this.camera = new THREE.PerspectiveCamera(60, aspect, 1, d * 2);
     this.camera.position.z = d;
     // render
     this.render();
@@ -61,10 +64,23 @@ class View {
   styleUrls: ['./canvas.component.css']
 })
 export class CanvasComponent implements OnInit, AfterViewInit {
-  // DOMのcanvas
-  @ViewChild('myCanvas', {static: false}) myCanvas: ElementRef<HTMLCanvasElement>;
+  private _xyz: string;
 
-  private view:View;
+  // DOMのcanvas
+  @ViewChild('myCanvas', { static: false }) myCanvas: ElementRef<HTMLCanvasElement>;
+
+  // ファイル
+  @Input()
+  set xyz(xyz: string) {
+    this._xyz = xyz;
+    this.renderxyz(this._xyz);
+  }
+  get xyz() {
+    return this._xyz;
+  }
+
+
+  private view: View;
   constructor() {
   }
 
@@ -78,4 +94,30 @@ export class CanvasComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
   }
 
+  /**
+   * render
+   * canvasにxyzファイルをrenderする
+   */
+  renderxyz(xyzstring: string) {
+    console.log(xyzstring);
+    const xyzvecs = xyzstring.split('\n');
+    xyzvecs.forEach(
+      (str, i) => {
+        // 0, 1行目はコメントと原子数なので無視する
+        if (2 <= i) {
+          console.log(i + ' ' + str);
+          const positionstr = str.split(/\s+/).slice(1, 4);
+          const position = positionstr.map(
+            (str) => parseFloat(str)
+          );
+          const geometry = new THREE.SphereGeometry(10, 32, 32);
+          const material = new THREE.MeshLambertMaterial({ color: 0xffFF00 });
+          const sphere = new THREE.Mesh(geometry, material);
+          sphere.position.set(position[0], position[1], position[2]);
+          this.view.scene.add(sphere);
+        }
+      }
+    );
+
+  }
 }

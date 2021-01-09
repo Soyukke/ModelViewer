@@ -7,4 +7,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ModelViewer';
+  str: string;
+
+  /**
+   * ドラッグ&ドロップされたファイルを受け取る
+   * @param {string} event  ドロップされたファイル
+   */
+  testOutput(event: string) {
+    this.str = event;
+  }
 }
