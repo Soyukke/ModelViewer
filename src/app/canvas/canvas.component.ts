@@ -1,4 +1,3 @@
-import { rendererTypeName } from '@angular/compiler';
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, Input } from '@angular/core';
 import * as THREE from 'three';
 
@@ -99,6 +98,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
    * canvasにxyzファイルをrenderする
    */
   renderxyz(xyzstring: string) {
+    const r = 8;
     console.log(xyzstring);
     const xyzvecs = xyzstring.split('\n');
     xyzvecs.forEach(
@@ -108,9 +108,9 @@ export class CanvasComponent implements OnInit, AfterViewInit {
           console.log(i + ' ' + str);
           const positionstr = str.split(/\s+/).slice(1, 4);
           const position = positionstr.map(
-            (str) => parseFloat(str)
+            (str) => r * parseFloat(str)
           );
-          const geometry = new THREE.SphereGeometry(10, 32, 32);
+          const geometry = new THREE.SphereGeometry(10, 12, 12);
           const material = new THREE.MeshLambertMaterial({ color: 0xffFF00 });
           const sphere = new THREE.Mesh(geometry, material);
           sphere.position.set(position[0], position[1], position[2]);
